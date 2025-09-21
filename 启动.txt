@@ -1,0 +1,75 @@
+启动本项目环境
+```cmd
+conda activate ./my_env
+```
+python scripts/inference/text2video.py   --sd_model_name majicmixRealv6Fp16   --unet_model_name musev_referencenet --referencenet_model_name musev_referencenet --ip_adapter_model_name musev_referencenet   -test_data_path ./configs/tasks/example.yaml  --output_dir ./output  --n_batch 1  --target_datas yongen  --vision_clip_extractor_class_name ImageClipVisionFeatureExtractor --vision_clip_model_path ./checkpoints/IP-Adapter/models/image_encoder  --time_size 12 --fps 12  
+
+cd scripts/gradio/
+python app.py
+
+注意
+1. 如果没有项目中没有my_env文件夹，先创建独立环境
+```cmd
+conda env create -p ./my_env -f environment-windows.yml
+```
+
+2. 如果没有安装conda，从https://repo.anaconda.com/miniconda/ 下载Miniconda3-latest-Windows-x86_64.exe
+
+3. 如果建独立环境失败，清理conda缓存
+```cmd
+conda clean --all --yes
+```
+
+4. 如果environment.yml更新，更新my_env环境命令
+```cmd
+conda env update --file environment-windows.yml --name my_env
+```
+
+5. 安装torch, 必须从按cuda版本11.8或12.9中二选一，因为mmcv只支持这两个版本的硬件加速
+pip install torch torchvision torchaudio xformers --extra-index-url https://download.pytorch.org/whl/cu118
+pip install torch torchvision torchaudio xformers --extra-index-url https://download.pytorch.org/whl/cu129
+
+
+6. 安装公共依赖
+pip install -r requirements.txt
+pip install --no-cache-dir -U openmim 
+mim install mmengine 
+mim install "mmcv>=2.0.1" 
+mim install "mmdet>=3.1.0" 
+mim install "mmpose>=1.1.0" 
+
+7. 安装私有依赖
+安装controlnet_aux:
+```cmd
+pip install -e ./controlnet_aux
+```
+
+安装diffusers:
+```cmd
+pip install -e ./diffusers
+```
+
+安装MMCM
+```cmd
+pip install -e ./MMCM
+```
+
+安装musev:
+```cmd
+pip install -e .
+```
+
+如果找不到musev，mmcm，duffusers或controlnet，设置模块搜索路径：
+```cmd
+set PYTHONPATH=%cd%
+set PYTHONPATH=%PYTHONPATH%;%cd%\musev
+set PYTHONPATH=%PYTHONPATH%;%cd%\MMCM
+set PYTHONPATH=%PYTHONPATH%;%cd%\diffusers\src
+set PYTHONPATH=%PYTHONPATH%;%cd%\controlnet_aux\src
+echo PYTHONPATH: %PYTHONPATH%
+```
+
+如果要移除PYTHONPATH
+```cmd
+set PYTHONPATH=
+```
